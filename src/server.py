@@ -13,7 +13,7 @@ from twisted.internet.protocol import ServerFactory, connectionDone
 class Client(LineOnlyReceiver):
     """Класс для обработки соединения с клиентом сервера"""
 
-    delimiter = "\n".encode()  # \n для терминала, \r\n для GUI
+    delimiter = "\r\n".encode()  # \n для терминала, \r\n для GUI
 
     # указание фабрики для обработки подключений
     factory: 'Server'
