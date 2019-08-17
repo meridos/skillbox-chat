@@ -15,4 +15,3 @@
 #  2. pip install qt5reactor - установка пакета
 #  3. from PyQt5 import QtWidgets - подключить в файле .py
 #
-

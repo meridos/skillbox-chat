@@ -88,8 +88,9 @@ class ChatWindow(wx.Frame):
     def send_message(self, event):
         """Обработчик отправки сообщения"""
 
-        # self.protocol.transport.write()
-        self.protocol.sendLine(self.message_box.GetValue().encode())  # отправили
+        text_message = self.message_box.GetValue()
+
+        self.protocol.sendLine(text_message.encode())  # отправили
         self.message_box.SetValue('')  # сбросили текст в поле
 
 
@@ -111,4 +112,5 @@ if __name__ == '__main__':
         7410,
         Connector(window)
     )
+
     reactor.run()

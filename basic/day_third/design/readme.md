@@ -6,7 +6,6 @@ pyuic5 window.ui -o window.py
 
 Для быстрого создания приложения с загрузкой дизайна, используем пример:
 
-
 ```
 import sys
 from PyQt5 import QtWidgets
