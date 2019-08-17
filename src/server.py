@@ -66,12 +66,12 @@ class Client(LineOnlyReceiver):
                 user_login = message.replace("login:", "")  # вырезаем часть после :
 
                 # TODO: проверка существования логина
-                for user in self.factory.clients:
-                    if user_login == user.login:
-                        error = f"Login {user_login} already exists!"
-                        self.sendLine(error.encode())
-                        self.transport.loseConnection()
-                        return
+                # for user in self.factory.clients:
+                #     if user_login == user.login:
+                #         error = f"Login {user_login} already exists!"
+                #         self.sendLine(error.encode())
+                #         self.transport.loseConnection()
+                #         return
 
                 self.login = user_login
 
@@ -79,7 +79,7 @@ class Client(LineOnlyReceiver):
                 self.factory.notify_all_users(notification)  # отсылаем всем в чат
 
                 # TODO: сделать отправку 10-ти сообщений новому клиенту
-                self.send_history()
+                # self.send_history()
             else:
                 self.sendLine("Invalid login".encode())  # шлем уведомление, если в сообщении ошибка
         # если логин уже есть и это следующее сообщение
@@ -87,15 +87,15 @@ class Client(LineOnlyReceiver):
             format_message = f"{self.login}: {message}"  # форматируем сообщение от имени клиента
 
             # TODO: сохранять сообщения в список
-            self.factory.messages.append(format_message)
+            # self.factory.messages.append(format_message)
 
             # отсылаем всем в чат и в консоль сервера
             self.factory.notify_all_users(format_message)
             print(format_message)
 
-    def send_history(self):
-        # отправка последних 10 сообщений
-        pass
+    # def send_history(self):
+    #     # отправка последних 10 сообщений
+    #     pass
 
 
 class Server(ServerFactory):
