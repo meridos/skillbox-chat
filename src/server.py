@@ -63,25 +63,46 @@ class Client(LineOnlyReceiver):
         # если логин еще не зарегистрирован
         if self.login is None:
             if message.startswith("login:"):  # проверяем, чтобы в начале шел login:
-                self.login = message.replace("login:", "")  # вырезаем часть после :
+                user_login = message.replace("login:", "")  # вырезаем часть после :
+
+                # TODO: проверка существования логина
+                for user in self.factory.clients:
+                    if user_login == user.login:
+                        error = f"Login {user_login} already exists!"
+                        self.sendLine(error.encode())
+                        self.transport.loseConnection()
+                        return
+
+                self.login = user_login
 
                 notification = f"New user: {self.login}"  # формируем уведомление о новом клиенте
                 self.factory.notify_all_users(notification)  # отсылаем всем в чат
+
+                # TODO: сделать отправку 10-ти сообщений новому клиенту
+                self.send_history()
             else:
                 self.sendLine("Invalid login".encode())  # шлем уведомление, если в сообщении ошибка
         # если логин уже есть и это следующее сообщение
         else:
             format_message = f"{self.login}: {message}"  # форматируем сообщение от имени клиента
 
+            # TODO: сохранять сообщения в список
+            self.factory.messages.append(format_message)
+
             # отсылаем всем в чат и в консоль сервера
             self.factory.notify_all_users(format_message)
             print(format_message)
+
+    def send_history(self):
+        # отправка последних 10 сообщений
+        pass
 
 
 class Server(ServerFactory):
     """Класс для управления сервером"""
 
     clients: list  # список клиентов
+    messages: list
     protocol = Client  # протокол обработки клиента
 
     def __init__(self):
@@ -93,6 +114,7 @@ class Server(ServerFactory):
         """
 
         self.clients = []  # создаем пустой список клиентов
+        self.messages = []
 
         print("Server started - OK")  # уведомление в консоль сервера
 
