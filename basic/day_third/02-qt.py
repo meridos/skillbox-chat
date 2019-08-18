@@ -21,22 +21,28 @@ from basic.day_third.design import window
 
 
 class ExampleApp(QtWidgets.QMainWindow, window.Ui_MainWindow):
-    def __init__(self):
-        super().__init__()
-        self.setupUi(self)
+    """Основное окно приложения Qt"""
 
+    def __init__(self):
+        """Конструктор окна"""
+
+        super().__init__()  # вызываем родительский конструктор
+        self.setupUi(self)  # вызываем метод построения интерфейса (из класс window.Ui_MainWindow)
+
+        # привязываем событие по нажатию на кнопку
         self.pushButton.clicked.connect(self.update_text)
 
     def update_text(self, event):
+        """Изменение текста при нажатии на кнопку"""
+
         self.plainTextEdit.appendPlainText(f"Text updated: {event}")
 
 
-def main():
-    app = QtWidgets.QApplication(sys.argv)
-    window = ExampleApp()
-    window.show()
-    app.exec_()
-
-
-if __name__ == '__main__':
-    main()
+# создаем приложение
+app = QtWidgets.QApplication(sys.argv)
+# создаем окно
+window = ExampleApp()
+# показываем окно
+window.show()
+# запускаем бесконечный цикл для показа приложения
+app.exec_()
