@@ -1,4 +1,4 @@
-# SkillBox Python - Приложение мини-чат
+# SkillBox - Приложение мини-чат на Python
 
 В данном репозитории находятся материалы и примеры кода с 
 [онлайн интенсива](https://webinar.skillbox.ru/messenger-python/) по разработке на Python от [SkillBox](https://skillbox.ru) 
