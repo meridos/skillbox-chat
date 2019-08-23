@@ -97,7 +97,7 @@ class Client(LineOnlyReceiver):
     def addMessage(self, message: str):
         self.factory.last_messages.append(message)
         if len(self.factory.last_messages) > 10:
-            self.factory.last_messages.pop()
+            self.factory.last_messages.pop(0)
 
 class Server(ServerFactory):
     """Класс для управления сервером"""
