@@ -5,6 +5,7 @@
 #
 #  Сервер для обработки сообщений от клиентов
 #
+from typing import List
 from twisted.internet import reactor
 from twisted.protocols.basic import LineOnlyReceiver
 from twisted.internet.protocol import ServerFactory, connectionDone
@@ -35,6 +36,10 @@ class Client(LineOnlyReceiver):
         self.factory.clients.append(self)  # добавляем в список клиентов фабрики
 
         self.sendLine("Welcome to the chat!".encode())  # отправляем сообщение клиенту
+        self.sendLine("Last 10 messages from chat:".encode())
+
+        for message in self.factory.last_messages:
+            self.sendLine(message.encode())
 
         print(f"Client {self.ip} connected")  # отображаем сообщение в консоли сервера
 
@@ -65,6 +70,10 @@ class Client(LineOnlyReceiver):
             if message.startswith("login:"):  # проверяем, чтобы в начале шел login:
                 self.login = message.replace("login:", "")  # вырезаем часть после :
 
+                if self.findUserByLogin(self.login):
+                    self.sendLine("Login already is exist".encode())
+                    return self.transport.loseConnection()
+
                 notification = f"New user: {self.login}"  # формируем уведомление о новом клиенте
                 self.factory.notify_all_users(notification)  # отсылаем всем в чат
             else:
@@ -75,13 +84,26 @@ class Client(LineOnlyReceiver):
 
             # отсылаем всем в чат и в консоль сервера
             self.factory.notify_all_users(format_message)
+            self.addMessage(format_message)
             print(format_message)
 
+    def findUserByLogin(self, login: str):
+        for user in self.factory.clients:
+            if user.login == login and user != self:
+                return True
+
+        return False
+
+    def addMessage(self, message: str):
+        self.factory.last_messages.append(message)
+        if len(self.factory.last_messages) > 10:
+            self.factory.last_messages.pop()
 
 class Server(ServerFactory):
     """Класс для управления сервером"""
 
-    clients: list  # список клиентов
+    clients: List[Client]  # список клиентов
+    last_messages: List[str]  # список последних сообщений
     protocol = Client  # протокол обработки клиента
 
     def __init__(self):
@@ -93,6 +115,7 @@ class Server(ServerFactory):
         """
 
         self.clients = []  # создаем пустой список клиентов
+        self.last_messages = []  # создаем пустой список последних сообщений
 
         print("Server started - OK")  # уведомление в консоль сервера
 
