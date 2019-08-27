@@ -36,10 +36,6 @@ class Client(LineOnlyReceiver):
         self.factory.clients.append(self)  # добавляем в список клиентов фабрики
 
         self.sendLine("Welcome to the chat!".encode())  # отправляем сообщение клиенту
-        self.sendLine("Last 10 messages from chat:".encode())
-
-        for message in self.factory.last_messages:
-            self.sendLine(message.encode())
 
         print(f"Client {self.ip} connected")  # отображаем сообщение в консоли сервера
 
@@ -76,6 +72,7 @@ class Client(LineOnlyReceiver):
 
                 notification = f"New user: {self.login}"  # формируем уведомление о новом клиенте
                 self.factory.notify_all_users(notification)  # отсылаем всем в чат
+                self.send_history()
             else:
                 self.sendLine("Invalid login".encode())  # шлем уведомление, если в сообщении ошибка
         # если логин уже есть и это следующее сообщение
@@ -98,6 +95,10 @@ class Client(LineOnlyReceiver):
         self.factory.last_messages.append(message)
         if len(self.factory.last_messages) > 10:
             self.factory.last_messages.pop(0)
+            
+    def send_history(self):
+        for message in self.factory.last_messages:
+            self.sendLine(message.encode())
 
 class Server(ServerFactory):
     """Класс для управления сервером"""
